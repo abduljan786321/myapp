@@ -7,12 +7,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer (Docker) - Accept licenses inside container
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Add build-tools to PATH
+        run: echo "$ANDROID_SDK_ROOT/build-tools/34.0.0" >> $GITHUB_PATH
+
+      - name: Verify aidl is available
+        run: which aidl && aidl --version
+
+      - name: Build with Buildozer
         run: |
           docker run --rm \
             -v "${{ github.workspace }}":/home/user/hostcwd \
-            kivy/buildozer \
-            sh -c "yes | sdkmanager --licenses && yes | buildozer android debug"
+            kivy/buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
