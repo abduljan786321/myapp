@@ -14,3 +14,4 @@ android.accept_sdk_license = True
 log_level = 2
 warn_on_root = 1
 android.skip_update = False
+android.build_tools_version = 34.0.0
