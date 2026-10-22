@@ -3,19 +3,26 @@ on: [push, workflow_dispatch]
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer (Docker)
+      - name: Install system dependencies
         run: |
-          docker run --rm -i \
-            -v "${{ github.workspace }}":/home/user/hostcwd \
-            --entrypoint /bin/bash \
-            kivy/buildozer -c "echo y | buildozer android debug"
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake
+
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade buildozer
+          pip install --upgrade cython==0.29.33
+
+      - name: Build APK
+        run: |
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: ${{ github.workspace }}/bin/*.apk
+          path: bin/*.apk
