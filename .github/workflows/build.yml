@@ -7,17 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Accept Android SDK Licenses
-        run: |
-          export ANDROID_SDK_ROOT=$ANDROID_HOME
-          mkdir -p $ANDROID_SDK_ROOT/licenses
-          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
-          echo -e "\n8933bad161af4b6a5b573652ffc7aaf3aee85a47" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          echo -e "\nd56f5187479451eabf01fb78af6dfcb131b33910" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/google-tv-preview-license
-
-      - name: Build with Buildozer (Docker)
+      - name: Build with Buildozer (Official Docker)
         run: |
           docker run --rm \
             -v "${{ github.workspace }}":/home/user/hostcwd \
